@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:worldtime/services/world_time.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class ChooseLocation extends StatefulWidget {
   @override
@@ -7,6 +8,8 @@ class ChooseLocation extends StatefulWidget {
 }
 
 class _ChooseLocationState extends State<ChooseLocation> {
+  ProgressDialog progressDialog;
+
   List<WorldTime> locations = [
     WorldTime(url: 'Europe/London', location: 'London', flag: 'uk.png'),
     WorldTime(url: 'Europe/Berlin', location: 'Athens', flag: 'greece.png'),
@@ -19,9 +22,13 @@ class _ChooseLocationState extends State<ChooseLocation> {
     WorldTime(url: 'America/Sao_Paulo', location: 'Brasil', flag: 'brasil.png'),
   ];
 
-  void updateTime(index) async {
+  void updateTime(int index) async {
+    progressDialog.style(message: "Loading");
+    progressDialog.show();
     WorldTime instance = locations[index];
+    progressDialog.hide().whenComplete(() {});
     await instance.getTime();
+    progressDialog.hide();
     Navigator.pop(
       context,
       {
@@ -35,6 +42,7 @@ class _ChooseLocationState extends State<ChooseLocation> {
 
   @override
   Widget build(BuildContext context) {
+    progressDialog = new ProgressDialog(context);
     return Scaffold(
       backgroundColor: Colors.grey[200],
       appBar: AppBar(
